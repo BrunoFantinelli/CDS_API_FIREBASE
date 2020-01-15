@@ -16,7 +16,8 @@ namespace CDS_API_FIREBASE
             {
                 Console.WriteLine("1 - Cadastrar Novo Usuario.");
                 Console.WriteLine("2 - Buscar Usuario.");
-                Console.WriteLine("3 - Sair.");
+                Console.WriteLine("3 - Excluir Usuario.");
+                Console.WriteLine("4 - Sair.");
                 Console.Write("OP: ");
                 String op = Console.ReadLine();
                 switch (op)
@@ -54,6 +55,19 @@ namespace CDS_API_FIREBASE
                         break;
 
                     case "3":
+                        Console.Write("ID: ");
+                        String id = Console.ReadLine();
+                        busca = buscarUser(id);
+                        if (busca != null)
+                        {
+                            apagarUser(id);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Usuario Inexistente");
+                        }
+                       break;
+                    case "4":
                         return;
                     
                     default:
@@ -75,6 +89,7 @@ namespace CDS_API_FIREBASE
             request.ContentLength = buffer.Length;
             request.GetRequestStream().Write(buffer, 0, buffer.Length);
             request.GetResponse();
+            Console.WriteLine("Usuário Cadastrado com Sucesso.");
 
         }
 
@@ -84,6 +99,15 @@ namespace CDS_API_FIREBASE
             String resultado = wc.DownloadString("https://cds-firebase.firebaseio.com/" + id + ".json");
             User aux = JsonSerializer.Deserialize<User>(resultado);
             return aux;
+        }
+
+        public static void apagarUser(String id)
+        {
+            var request = WebRequest.CreateHttp("https://cds-firebase.firebaseio.com/" + id + ".json");
+            request.Method = "DELETE";
+            request.ContentType = "application/json";
+            request.GetResponse();
+            Console.WriteLine("Usuário Apagado com Sucesso.");
         }
     }
 }
